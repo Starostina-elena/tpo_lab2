@@ -2,7 +2,7 @@ package org.lia.trigonometry;
 
 public class Sin {
 
-   public static double calculate(double x, double precision) {
+   public static double calculate(double x, double precision, boolean useTable) {
         if (Double.isNaN(x) || Double.isNaN(precision) || Double.isInfinite(x) || Double.isInfinite(precision)) {
             throw new IllegalArgumentException("x and precision must be numbers");
         }
@@ -11,6 +11,13 @@ public class Sin {
         }
 
         double xr = Math.IEEEremainder(x, 2 * Math.PI);
+
+        if (useTable) {
+            java.util.OptionalDouble tableValue = tableSearch(xr);
+            if (tableValue.isPresent()) {
+                return tableValue.getAsDouble();
+            }
+        }
 
         // члены ряда: term_{0} = xr, term_{n+1} = -term_n * xr^2 / ((2n+2)*(2n+3))
         double term = xr; 
@@ -29,5 +36,25 @@ public class Sin {
         }
 
         return sum;
+    }
+
+    private static final java.util.Map<Double, Double> TABLE;
+    static {
+        TABLE = new java.util.HashMap<>();
+        TABLE.put(0.0, 0.0);
+        TABLE.put(0.5235987755982988, 0.5);  // PI/6
+        TABLE.put(0.7853981633974483, 0.7071067811865476); // PI/4
+        TABLE.put(1.0471975511965976, 0.8660254037844386); // PI/3
+        TABLE.put(1.5707963267948966, 1.0); // PI/2
+        TABLE.put(3.141592653589793, 0.0);  // PI
+        TABLE.put(-1.5707963267948966, -1.0); // -PI/2
+    }
+
+    public static java.util.OptionalDouble tableSearch(double x) {
+        if (Double.isNaN(x) || Double.isInfinite(x)) {
+            return java.util.OptionalDouble.empty();
+        }
+        Double v = TABLE.get(x);
+        return v == null ? java.util.OptionalDouble.empty() : java.util.OptionalDouble.of(v);
     }
 }

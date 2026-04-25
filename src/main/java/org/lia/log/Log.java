@@ -2,7 +2,7 @@ package org.lia.log;
 
 public class Log {
 
-    public static double calculate(double x, double precision, double foundation) {
+    public static double calculate(double x, double precision, double foundation, boolean useTable) {
         if (Double.isNaN(x) || Double.isNaN(precision) || Double.isInfinite(x) || Double.isInfinite(precision)) {
             throw new IllegalArgumentException("x and precision must be numbers");
         }
@@ -23,13 +23,47 @@ public class Log {
             throw new IllegalArgumentException("foundation must not be 1");
         }
 
-        double lnX = Ln.calculate(x, precision);
-        double lnF = Ln.calculate(foundation, precision);
+        if (useTable) {
+            java.util.OptionalDouble tableValue = tableSearch(x, foundation);
+            if (tableValue.isPresent()) {
+                return tableValue.getAsDouble();
+            }
+        }
+
+        double lnX = Ln.calculate(x, precision, useTable);
+        double lnF = Ln.calculate(foundation, precision, useTable);
 
         if (Math.abs(lnF) < Double.MIN_VALUE) {
             throw new ArithmeticException("Logarithm of foundation is too close to zero");
         }
 
         return lnX / lnF;
+    }
+
+    public static java.util.OptionalDouble tableSearch(double x, double foundation) {
+        if (Double.isNaN(x) || Double.isNaN(foundation)) {
+            return java.util.OptionalDouble.empty();
+        }
+        if (x <= 0.0 || foundation <= 0.0 || foundation == 1.0) {
+            return java.util.OptionalDouble.empty();
+        }
+
+        if (x == 1.0) {
+            return java.util.OptionalDouble.of(0.0);
+        }
+        if (x == foundation) {
+            return java.util.OptionalDouble.of(1.0);
+        }
+        if (foundation * foundation == x) {
+            return java.util.OptionalDouble.of(2.0);
+        }
+        if (foundation * foundation * foundation == x) {
+            return java.util.OptionalDouble.of(3.0);
+        }
+        if (x * x == foundation) {
+            return java.util.OptionalDouble.of(0.5);
+        }
+
+        return java.util.OptionalDouble.empty();
     }
 }
