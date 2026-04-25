@@ -43,4 +43,33 @@ public class Tan {
         Double v = TABLE.get(x);
         return v == null ? java.util.OptionalDouble.empty() : java.util.OptionalDouble.of(v);
     }
+
+    public static void printTable(double start, double end, double step, String filename) {
+        if (Double.isNaN(start) || Double.isNaN(end) || Double.isNaN(step) ||
+            Double.isInfinite(start) || Double.isInfinite(end) || Double.isInfinite(step)) {
+            throw new IllegalArgumentException("start, end, and step must be finite numbers");
+        }
+        if (step <= 0.0) {
+            throw new IllegalArgumentException("step must be > 0");
+        }
+        if (filename == null || filename.isEmpty()) {
+            throw new IllegalArgumentException("filename must be provided");
+        }
+
+        java.io.File f = new java.io.File(filename);
+        java.io.File parent = f.getAbsoluteFile().getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(f))) {
+            pw.println("X, Результаты модуля (X)");
+            for (double x = start; x <= end; x += step) {
+                double v = calculate(x, 1e-10, true);
+                pw.printf("%s,%s%n", x, v);
+            }
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to write CSV file: " + filename, e);
+        }
+    }
 }
