@@ -1,0 +1,80 @@
+@startuml
+' package / namespaces
+package org.lia {
+  class Main {
+    +main(args: String[]): void
+  }
+
+  class SuperCalculator {
+    -tan: org.lia.trigonometry.Tan
+    -cotan: org.lia.trigonometry.Cotan
+    -log: org.lia.log.Log
+    -ln: org.lia.log.Ln
+    +SuperCalculator(tan: Tan, cotan: Cotan, log: Log, ln: Ln)
+    +calculate(x: double, precision: double, useTable: boolean): double
+    +tableSearch(x: double): java.util.OptionalDouble
+    +printTable(start: double, end: double, step: double, filename: String): void
+  }
+}
+
+package org.lia.log {
+  class Ln {
+    +calculate(x: double, precision: double, useTable: boolean): double
+    +tableSearch(x: double): java.util.OptionalDouble
+    +printTable(start: double, end: double, step: double, filename: String): void
+  }
+
+  class Log {
+    -ln: Ln
+    +Log(ln: Ln)
+    +calculate(x: double, precision: double, foundation: double, useTable: boolean): double
+    +tableSearch(x: double, foundation: double): java.util.OptionalDouble
+    +printTable(start: double, end: double, step: double, foundation: double, filename: String): void
+  }
+}
+
+package org.lia.trigonometry {
+  class Sin {
+    +calculate(x: double, precision: double, useTable: boolean): double
+    +tableSearch(x: double): java.util.OptionalDouble
+    +printTable(start: double, end: double, step: double, filename: String): void
+  }
+
+  class Cos {
+    +calculate(x: double, precision: double, useTable: boolean): double
+    +tableSearch(x: double): java.util.OptionalDouble
+    +printTable(start: double, end: double, step: double, filename: String): void
+  }
+
+  class Tan {
+    -sin: Sin
+    -cos: Cos
+    +Tan(sin: Sin, cos: Cos)
+    +calculate(x: double, precision: double, useTable: boolean): double
+    +tableSearch(x: double): java.util.OptionalDouble
+  }
+
+  class Cotan {
+    -sin: Sin
+    -cos: Cos
+    +Cotan(sin: Sin, cos: Cos)
+    +calculate(x: double, precision: double, useTable: boolean): double
+    +tableSearch(x: double): java.util.OptionalDouble
+  }
+}
+
+' associations
+SuperCalculator --> org.lia.trigonometry.Tan : uses
+SuperCalculator --> org.lia.trigonometry.Cotan : uses
+SuperCalculator --> org.lia.log.Log : uses
+SuperCalculator --> org.lia.log.Ln : uses
+
+Log --> Ln : delegates
+Tan --> Sin : uses
+Tan --> Cos : uses
+Cotan --> Sin : uses
+Cotan --> Cos : uses
+
+Main ..> SuperCalculator : creates/uses
+
+@enduml
