@@ -2,7 +2,15 @@ package org.lia.trigonometry;
 
 public class Cotan {
 
-    public static double calculate(double x, double precision, boolean useTable) {
+    private final Sin sin;
+    private final Cos cos;
+
+    public Cotan(Sin sin, Cos cos) {
+        this.sin = sin;
+        this.cos = cos;
+    }
+
+    public double calculate(double x, double precision, boolean useTable) {
         if (Double.isNaN(x) || Double.isNaN(precision) || Double.isInfinite(x) || Double.isInfinite(precision)) {
             throw new IllegalArgumentException("x and precision must be numbers");
         }
@@ -19,12 +27,12 @@ public class Cotan {
             }
         }
 
-        double sin = Sin.calculate(xr, precision, useTable);
-        if (Math.abs(sin) < precision) {
+        double sinv = sin.calculate(xr, precision, useTable);
+        if (Math.abs(sinv) < precision) {
             throw new ArithmeticException("cotan is undefined for this x (sin is too close to zero)");
         }
-        double cos = Cos.calculate(xr, precision, useTable);
-        return cos / sin ;
+        double cosv = cos.calculate(xr, precision, useTable);
+        return cosv / sinv ;
     }
 
     private static final java.util.Map<Double, Double> TABLE;
@@ -35,7 +43,7 @@ public class Cotan {
         TABLE.put(1.0471975511965976, 0.5773502691896257); // PI/3 -> 1/sqrt(3)
     }
 
-    public static java.util.OptionalDouble tableSearch(double x) {
+    public java.util.OptionalDouble tableSearch(double x) {
         if (Double.isNaN(x) || Double.isInfinite(x)) {
             return java.util.OptionalDouble.empty();
         }
@@ -43,7 +51,7 @@ public class Cotan {
         return v == null ? java.util.OptionalDouble.empty() : java.util.OptionalDouble.of(v);
     }
 
-    public static void printTable(double start, double end, double step, String filename) {
+    public void printTable(double start, double end, double step, String filename) {
         if (Double.isNaN(start) || Double.isNaN(end) || Double.isNaN(step) ||
             Double.isInfinite(start) || Double.isInfinite(end) || Double.isInfinite(step)) {
             throw new IllegalArgumentException("start, end, and step must be finite numbers");

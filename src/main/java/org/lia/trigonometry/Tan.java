@@ -2,7 +2,15 @@ package org.lia.trigonometry;
 
 public class Tan {
 
-    public static double calculate(double x, double precision, boolean useTable) {
+    private final Sin sin;
+    private final Cos cos;
+
+    public Tan(Sin sin, Cos cos) {
+        this.sin = sin;
+        this.cos = cos;
+    }
+
+    public double calculate(double x, double precision, boolean useTable) {
         if (Double.isNaN(x) || Double.isNaN(precision) || Double.isInfinite(x) || Double.isInfinite(precision)) {
             throw new IllegalArgumentException("x and precision must be numbers");
         }
@@ -19,12 +27,12 @@ public class Tan {
             }
         }
 
-        double cos = Cos.calculate(xr, precision, useTable);
-        if (Math.abs(cos) < precision) {
+        double cosv = cos.calculate(xr, precision, useTable);
+        if (Math.abs(cosv) < precision) {
             throw new ArithmeticException("tan is undefined for this x (cos is too close to zero)");
         }
-        double sin = Sin.calculate(xr, precision, useTable);
-        return sin / cos;
+        double sinv = sin.calculate(xr, precision, useTable);
+        return sinv / cosv;
     }
 
     private static final java.util.Map<Double, Double> TABLE;
@@ -36,7 +44,7 @@ public class Tan {
         TABLE.put(1.0471975511965976, 1.7320508075688772);   // PI/3
     }
 
-    public static java.util.OptionalDouble tableSearch(double x) {
+    public java.util.OptionalDouble tableSearch(double x) {
         if (Double.isNaN(x) || Double.isInfinite(x)) {
             return java.util.OptionalDouble.empty();
         }
@@ -44,7 +52,7 @@ public class Tan {
         return v == null ? java.util.OptionalDouble.empty() : java.util.OptionalDouble.of(v);
     }
 
-    public static void printTable(double start, double end, double step, String filename) {
+    public void printTable(double start, double end, double step, String filename) {
         if (Double.isNaN(start) || Double.isNaN(end) || Double.isNaN(step) ||
             Double.isInfinite(start) || Double.isInfinite(end) || Double.isInfinite(step)) {
             throw new IllegalArgumentException("start, end, and step must be finite numbers");

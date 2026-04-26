@@ -2,7 +2,7 @@ package org.lia.trigonometry;
 
 public class Cos {
 
-    public static double calculate(double x, double precision, boolean useTable) {
+    public double calculate(double x, double precision, boolean useTable) {
         if (Double.isNaN(x) || Double.isNaN(precision) || Double.isInfinite(x) || Double.isInfinite(precision)) {
             throw new IllegalArgumentException("x and precision must be numbers");
         }
@@ -49,7 +49,7 @@ public class Cos {
         TABLE.put(3.141592653589793, -1.0); // PI
     }
 
-    public static java.util.OptionalDouble tableSearch(double x) {
+    public java.util.OptionalDouble tableSearch(double x) {
         if (Double.isNaN(x) || Double.isInfinite(x)) {
             return java.util.OptionalDouble.empty();
         }
@@ -57,7 +57,7 @@ public class Cos {
         return v == null ? java.util.OptionalDouble.empty() : java.util.OptionalDouble.of(v);
     }
 
-    public static void printTable(double start, double end, double step, String filename) {
+    public void printTable(double start, double end, double step, String filename) {
         if (Double.isNaN(start) || Double.isNaN(end) || Double.isNaN(step) ||
             Double.isInfinite(start) || Double.isInfinite(end) || Double.isInfinite(step)) {
             throw new IllegalArgumentException("start, end, and step must be finite numbers");

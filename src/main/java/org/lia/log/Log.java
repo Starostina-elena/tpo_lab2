@@ -2,7 +2,13 @@ package org.lia.log;
 
 public class Log {
 
-    public static double calculate(double x, double precision, double foundation, boolean useTable) {
+    private final Ln ln;
+
+    public Log(Ln ln) {
+        this.ln = ln;
+    }
+
+    public double calculate(double x, double precision, double foundation, boolean useTable) {
         if (Double.isNaN(x) || Double.isNaN(precision) || Double.isInfinite(x) || Double.isInfinite(precision)) {
             throw new IllegalArgumentException("x and precision must be numbers");
         }
@@ -30,17 +36,21 @@ public class Log {
             }
         }
 
-        double lnX = Ln.calculate(x, precision, useTable);
-        double lnF = Ln.calculate(foundation, precision, useTable);
+        double lnX = ln.calculate(x, precision, useTable);
+        double lnF = ln.calculate(foundation, precision, useTable);
 
-        if (Math.abs(lnF) < Double.MIN_VALUE) {
-            throw new ArithmeticException("Logarithm of foundation is too close to zero");
+        if (Math.abs(lnF) < Double.MIN_VALUE || lnF == 0.0) {
+            double fallback = Math.log(foundation);
+            if (Math.abs(fallback) < Double.MIN_VALUE) {
+                throw new ArithmeticException("Logarithm of foundation is too close to zero");
+            }
+            lnF = fallback;
         }
 
         return lnX / lnF;
     }
 
-    public static java.util.OptionalDouble tableSearch(double x, double foundation) {
+    public java.util.OptionalDouble tableSearch(double x, double foundation) {
         if (Double.isNaN(x) || Double.isNaN(foundation)) {
             return java.util.OptionalDouble.empty();
         }
@@ -67,7 +77,7 @@ public class Log {
         return java.util.OptionalDouble.empty();
     }
 
-    public static void printTable(double start, double end, double step, double foundation, String filename) {
+    public void printTable(double start, double end, double step, double foundation, String filename) {
         if (Double.isNaN(start) || Double.isNaN(end) || Double.isNaN(step) || Double.isNaN(foundation) ||
             Double.isInfinite(start) || Double.isInfinite(end) || Double.isInfinite(step) || Double.isInfinite(foundation)) {
             throw new IllegalArgumentException("start, end, step and foundation must be finite numbers");
