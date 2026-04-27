@@ -21,7 +21,7 @@ public class TanTest {
     }
 
     @Test
-    void tableValuesCloseToReal_withMockedSinCos() {
+    void tableValuesCloseToReal() {
         Sin sin = mock(Sin.class);
         Cos cos = mock(Cos.class);
         when(sin.calculate(anyDouble(), anyDouble(), anyBoolean())).thenAnswer(inv -> Math.sin(inv.getArgument(0, Double.class)));
