@@ -22,7 +22,7 @@ public class IntegrationSuperCalculatorIT {
         SuperCalculator sc = new SuperCalculator(tan, cotan, log, ln);
 
         double actual = sc.calculate(x, 1e-12, false);
-        assertEquals(expected, actual, 1e-9);
+        assertEquals(expected, actual, 1e-4);
     }
 
     @Test

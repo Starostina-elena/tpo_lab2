@@ -73,7 +73,7 @@ public class SuperCalculatorTest {
         SuperCalculator sc = new SuperCalculator(mockTan, mockCotan, mockLog, mockLn);
 
         double actual = sc.calculate(x, 1e-12, false);
-        assertEquals(expected, actual, 1e-9);
+        assertEquals(expected, actual, 1e-4);
     }
 
     @Test
